@@ -1,0 +1,313 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+        <div class="HeaderHeight uk-inline" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img id="Refresh" src="refresh.svg" style="width:25px; height: 25px;" alt=""/>
+            &nbsp
+        </div>
+        <div class="HeaderHeight BCCYellow" style="text-align: center;flex: auto;">
+            &nbsp&nbsp [<b>Results</b>]
+        </div>
+        <div class="HeaderHeight" id="Return" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img src="left-arrow.svg" style="width:20px; height: 20px;" alt=""/>
+            &nbsp
+        </div>
+    </div>
+</div>
+<div class="CenteredItems" style="margin-top: 20px; background-color: #FBFBFB;">
+    <svg id="canvas" class="GraphSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"></svg>
+</div>
+<div id="WaitPanel">
+    <div id="Spinner" uk-spinner="ratio: 2" class="CenteredItems" style="text-align: center; padding-top: 30px;"></div>
+    <div id="SpinnerInfo" class="CenteredItems" style="text-align: center; padding-top: 25px;"></div>
+    <div class="CenteredItems" style="text-align: center; padding-top: 25px;">
+        <button id="StopButton" class="uk-button uk-button-default" >Cancel</button>
+    </div>
+</div>
+
+<br/>
+<div class="CenteredItems" id="DonePanel">
+    <div class="CenteredItems ParamsDropDownHPanel">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Results</span></h1>
+    </div>
+
+    <table id="table" class="uk-table uk-table-striped uk-table-hover" style="font-size: 95%">
+        <tbody>
+        <tr style="background-color: #ffffdd">
+            <td style="font-weight: bold;"># of Placements</td>
+            <td style="font-weight: bold;" id="placements"></td>
+        </tr>
+        <tr>
+            <td>Strategy</td>
+            <td id="strategy"></td>
+        </tr>
+        <tr>
+            <td>SN Topology</td>
+            <td id="NetworkTopology" class="uk-text-truncate"></td>
+        </tr>
+        <tr>
+            <td>SG Topology, Size, Latency</td>
+            <td id="topology"></td>
+        </tr>
+        <tr>
+            <td>User locations</td>
+            <td id="userLocations"></td>
+        </tr>
+        <tr>
+            <td>Iterations</td>
+            <td id="Iterations"></td>
+        </tr>
+        <tr>
+            <td>Average Time (ms)</td>
+            <td id="avg"></td>
+        </tr>
+        <tr>
+            <td>Remained BW, CPU, Storage (%)</td>
+            <td id="remaining"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<button id="PlacementDetails" class="uk-button uk-button-primary BCButtonBlue CenteredItems" style="margin-top: 20px;">Placements details</button>
+<div class="CenteredItems" id="PlacementDetailPanel">
+    <div class="CenteredItems ParamsDropDownHPanel">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Placements</span></h1>
+        <img id="CopyPlacementDetails" class="ParamsDropDownImg" style="width: 30px; padding: 0;" src="clipboard.svg" alt=""/>
+    </div>
+    <div style="overflow: auto; overflow-x: hidden; height: 430px;">
+        <table class="uk-table uk-table-striped uk-table-hover CenteredItems" style="font-size: 95%">
+            <tbody id="PDTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<button id="ResourceDetails" class="uk-button uk-button-primary BCButtonBlue CenteredItems" style="margin-top: 20px;">Remaining resources' details</button>
+<div class="CenteredItems" id="ResourceDetailPanel" style="margin-top: 20px;">
+    <div class="CenteredItems ParamsDropDownHPanel">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Remaining Resources</span></h1>
+        <img id="CopyResourceDetails" class="ParamsDropDownImg" style="width: 30px; padding: 0;" src="clipboard.svg" alt=""/>
+    </div>
+    <div style="overflow: auto; overflow-x: hidden; height: 430px;">
+        <table class="uk-table uk-table-striped uk-table-hover CenteredItems" style="font-size: 95%">
+            <tbody id="RDTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script src="graphSvg.js"></script>
+<script>
+    loadGraph("getLayout", window.parent.parameters.networkTopology);
+
+    $("#DonePanel").hide();
+    $("#PlacementDetailPanel").hide();
+    $("#PlacementDetails").hide();
+    $("#ResourceDetailPanel").hide();
+    $("#ResourceDetails").hide();
+
+    $("#Return").click(function () {
+        clearInterval(myInterval);
+        load("/main.html");
+        if(hasParent()) {
+            window.parent.stop();
+        }
+    });
+
+    $("#Refresh").click(function () {
+        $.ajax({
+            url: "/api/eval/start",
+            type: "POST",
+            error: function (data, status) {
+                onerror(data);
+            },
+            success: function (data, status) {
+                load("/results.html");
+            },
+            data: JSON.stringify(window.parent.parameters)
+        });
+    });
+
+    var placementDetailData = "";
+    $("#CopyPlacementDetails").click(function () {
+        copyClipboard(placementDetailData, "Placements copied to clipboard!");
+    });
+    var resourceDetailData = "";
+    $("#CopyResourceDetails").click(function () {
+        copyClipboard(resourceDetailData, "Resources copied to clipboard!");
+    });
+    $("#PlacementDetails").click(function () {
+        $.ajax({
+            url: "/api/eval/getPlacementDetails",
+            type: "GET",
+            error: function (data, status) {
+                console.log("Function: error");
+            },
+            success: function (data, status) {
+                $("#PlacementDetails").hide();
+                $("#PlacementDetailPanel").fadeIn(fadeDelay);
+                placementDetailData = data;
+                var lines = data.split('\n');
+                for(var i = 0;i < lines.length; i+=5) {
+                    var tr = document.createElement('tr');
+                    var td = document.createElement('td');
+                    td.innerHTML = lines[i] + "<br/>" + lines[i+1] + "<br/>" + lines[i+2] + "<br/>" + lines[i+3];
+                    tr.append(td);
+                    $("#PDTableBody").append(tr);
+                }
+            }
+        });
+    });
+    $("#ResourceDetails").click(function () {
+        $.ajax({
+            url: "/api/eval/getResourceDetails",
+            type: "GET",
+            error: function (data, status) {
+                console.log("Function: error");
+            },
+            success: function (data, status) {
+                $("#ResourceDetails").hide();
+                $("#ResourceDetailPanel").fadeIn(fadeDelay);
+                resourceDetailData = JSON.stringify(data);
+                for(let i = 0; i < data.nodes.length; i++) {
+                    var tr = document.createElement('tr');
+                    var td = document.createElement('td');
+                    var text = "Node " + data.nodes[i].label + ": cpu(" + data.nodes[i].cpu.amount + "/" + data.nodes[i].cpu.initialAmount + "), storage(" + data.nodes[i].storage.amount + "/" + data.nodes[i].storage.initialAmount + ")";
+                    td.innerHTML = text;
+                    tr.append(td);
+                    $("#RDTableBody").append(tr);
+                }
+                for(let i = 0; i < data.links.length; i++) {
+                    var tr = document.createElement('tr');
+                    var td = document.createElement('td');
+                    if(!data.links[i].loop) {
+                        td.innerHTML = "Link " + data.links[i].label + " (" + data.links[i].srcNode + " → " + data.links[i].dstNode + "): bandwidth(" + data.links[i].bandwidth.amount + "/" + data.links[i].bandwidth.initialAmount + ")";
+                    } else {
+                        td.innerHTML = "Link " + data.links[i].label + " (" + data.links[i].srcNode + " → " + data.links[i].dstNode + "): bandwidth("  + "∞/∞" + ")";
+                    }
+                    tr.append(td);
+                    $("#RDTableBody").append(tr);
+                }
+            }
+        });
+    });
+
+    $("#StopButton").click(function () {
+        if(hasParent()) {
+            window.parent.stop();
+        }
+    });
+
+    function reload() {
+        function updateLinkRB(linkRBPercent) {
+            if(graphLoaded && (linkRBPercent != null)) {
+                var linkRBs = linkRBPercent.trim().split("\n");
+                for(var i = 0; i < linkRBs.length; i++) {
+                    var split = linkRBs[i].split(",");
+                    var label = split[0];
+                    var percent = parseInt(split[1]);
+
+                    var link = document.getElementById("Link-" + label);
+                    link.setAttribute("opacity", "" + (percent / 100.0));
+                }
+            }
+        }
+        function updateNodeRC(nodeRCPercent) {
+            if(graphLoaded && (nodeRCPercent != null)) {
+                var nodeRCs = nodeRCPercent.trim().split("\n");
+                for(var i = 0; i < nodeRCs.length; i++) {
+                    var split = nodeRCs[i].split(",");
+                    var label = split[0];
+                    var percent = parseInt(split[1]);
+
+                    var nodes = document.getElementsByClassName("GraphNode");
+                    for(var j = 0; j < nodes.length; j++) {
+                        var node = nodes[j];
+                        var split = node.id.split("-");
+                        if(split[1] === label) {
+                            node.setAttribute("opacity", "" + (percent / 100.0));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        $.ajax({
+            url: "/api/eval/status",
+            type: "GET",
+            error: function (data, status) {
+                onerror(data);
+            },
+            success: function (data, status) {
+                if(data.running){
+                    $("#SpinnerInfo").html(data.counter + " placements found!");
+                    updateLinkRB(data.linkRBPercent);
+                    updateNodeRC(data.nodeRCPercent);
+                } else {
+                    $("#WaitPanel").hide();
+                    $("#DonePanel").fadeIn(fadeDelay);
+                    $("#PlacementDetails").fadeIn(fadeDelay);
+                    $("#ResourceDetails").fadeIn(fadeDelay);
+
+                    updateLinkRB(data.linkRBPercent);
+                    updateNodeRC(data.nodeRCPercent);
+
+                    if(hasParent()) {
+                        $("#NetworkTopology").html(window.parent.parameters.networkTopology);
+                        $("#Iterations").html(window.parent.parameters.timeout);
+                        $("#topology").html(window.parent.parameters.serviceTopology + ", " + window.parent.parameters.serviceSize + ", " + window.parent.parameters.sgLatency);
+                        $("#strategy").html(window.parent.parameters.strategy);
+                    }
+                    $("#placements").html(data.counter);
+                    //$("#qs").html(""+data.q0Time+", "+data.q1Time+", "+data.q2Time+", "+data.q3Time+", "+data.q4Time);
+                    $("#userLocations").html(window.parent.parameters.sgUsers);
+                    $("#avg").html(data.avgTime);
+                    $("#remaining").html(data.bwRemaining + ", " + data.cpuRemaining + ", " + data.stRemaining);
+                    clearInterval(myInterval);
+                }
+            }
+        });
+    }
+
+    var myInterval = setInterval(function() {
+        reload();
+    }, 500);
+
+</script>
+</body>
+</html>

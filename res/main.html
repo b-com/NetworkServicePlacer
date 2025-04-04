@@ -1,0 +1,466 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+        <div class="HeaderHeight uk-inline" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img id="OptionMenuImg" src="menu.svg" style="width:20px; height: 20px;" alt=""/>
+            &nbsp
+            <div id="OptionMenu" uk-dropdown="mode: click; pos: bottom-right; animation: uk-animation-slide-top-small; duration: 500" style="padding: 0">
+                <ul class="uk-nav uk-dropdown-nav">
+                    <li> <a id="LastResults" class="" href="#">Last results</a> </li>
+                    <li>
+                        <a><label><input id="SingleList" class="uk-checkbox BCCDarkGray" type="checkbox" checked/>&nbsp&nbsp Single list</label></a>
+                    </li>
+                    <li> <a id="GraphRepresentation" class="" href="#">Graph representation</a> </li>
+                    <li> <a id="NSPConnect" class="" href="#">NSPlacer-Connect</a> </li>
+                    <li> <a id="About" class="" href="#">About</a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="HeaderHeight BCCGreen" style="text-align: center;flex: auto;">
+            &nbsp&nbsp /<b>Network Service Placer</b>/
+        </div>
+    </div>
+</div>
+<br/>
+<div class="uk-form-stacked">
+    <div class="CenteredItems ParamsDropDownHPanel" id="SNHeader">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Substrate Network</span></h1>
+        <img id="SNHeaderArrow" class="ParamsDropDownImg" src="up-arrow.svg" alt=""/>
+    </div>
+
+    <div id="SNParams" class="CenteredItems ParamsDropDownPPanel">
+        <label class="uk-form-label" for="networkTopology">Topology</label>
+        <div class="uk-form-controls">
+            <select class="uk-select" id="networkTopology" onchange="SNChange()">
+            </select>
+        </div>
+
+        <label class="uk-form-label BCCBlue" style="padding-top: 20px; display: inline-block;">Initial available resources</label>
+        <div class="uk-inline" style="font-size: 90%;">
+            <img class="" style="width: 18px; margin-left: 10px;" src="info.svg" alt=""/>
+            <div uk-dropdown >For a random number, please enter min and max, separated by a hyphen, e.g., for considering random numbers in {5, 6, 7, 8} you should enter "5-8". </div>
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label TwoColumnWidth">CPU (node)</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft">Storage (node)</label>
+        <div class="uk-form-controls TwoColumnWidth" >
+            <input id="SNCPUAmount" class="uk-input" type="text" value="10" placeholder="">
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft" >
+            <input id="SNStorageAmount" class="uk-input" type="text" value="10" placeholder="">
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label TwoColumnWidth ">Bandwidth (link)</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft">Latency (link)</label>
+        <div class="uk-form-controls TwoColumnWidth " >
+            <input id="SNBandwidthAmount" class="uk-input" type="text" value="10" placeholder="">
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft" >
+            <input id="SNLatencyAmount" class="uk-input" type="text" value="1" placeholder="">
+        </div>
+    </div>
+
+    <div class="CenteredItems ParamsDropDownHPanel" id="SGHeader">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Service Graph</span></h1>
+        <img id="SGHeaderArrow" class="ParamsDropDownImg" src="down-arrow.svg" alt=""/>
+    </div>
+
+    <div id="SGParams" class="CenteredItems ParamsDropDownPPanel" style="display: none;">
+        <label class="uk-form-label TwoColumnWidth" for="serviceTopology">Topology</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft" for="sgUsers" >User Locations
+        <div class="uk-inline" style="font-size: 90%;">
+            <img class="" style="width: 18px; margin-left: 10px;" src="info.svg" alt=""/>
+            <div uk-dropdown>To enter the service users with a fixed network location, put their corresponding network node labels separated by comma, e.g., putting 12, 3, 15 means you have 3 fixed service users on network nodes 12, 3 and 15</div>
+        </div>
+        </label>
+        <div class="uk-form-controls TwoColumnWidth">
+            <select class="uk-select" id="serviceTopology" onchange="SGChange()">
+            </select>
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft">
+            <input id="sgUsers" class="uk-input" type="text" value="" placeholder="">
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+
+        <label class="uk-form-label TwoColumnWidth" for="serviceSize">Size</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft" for="SGLatencyAmount" >Latency (E2E)</label>
+        <div class="uk-form-controls TwoColumnWidth" >
+            <select class="uk-select" id="serviceSize">
+            </select>
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft">
+            <input id="SGLatencyAmount" class="uk-input" type="text" value="10" placeholder="">
+        </div>
+
+        <label class="uk-form-label BCCBlue" style="padding-top: 20px;">Required resources</label>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label TwoColumnWidth ">CPU (node)</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft">Storage (node)</label>
+        <div class="uk-form-controls TwoColumnWidth " >
+            <input id="SGCPUAmount" class="uk-input" type="text" value="1" placeholder="">
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft" >
+            <input id="SGStorageAmount" class="uk-input" type="text" value="1" placeholder="">
+        </div>
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label">Bandwidth (link)</label>
+        <div class="uk-form-controls" >
+            <input id="SGBandwidthAmount" class="uk-input" type="text" value="1" placeholder="">
+        </div>
+    </div>
+
+    <div class="CenteredItems ParamsDropDownHPanel" id="PlacerHeader">
+        <h1 class="uk-heading-small uk-heading-line uk-text-center ParamsDropDownHHeader"><span>Placer</span></h1>
+        <img id="PlacerHeaderArrow" class="ParamsDropDownImg" src="down-arrow.svg" alt=""/>
+    </div>
+    <div id="PlacerParams" class="CenteredItems ParamsDropDownPPanel" style="display: none;">
+        <label class="uk-form-label TwoColumnWidth" for="timeout">Maximum Iteration</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft" for="terminationType">Termination</label>
+        <div class="uk-form-controls TwoColumnWidth">
+            <select class="uk-select" id="timeout">
+            </select>
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft">
+            <select class="uk-select" id="terminationType">
+            </select>
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label TwoColumnWidth" for="approach">B&B Approach</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft" for="strategy">Algorithm</label>
+        <div class="uk-form-controls TwoColumnWidth">
+            <select class="uk-select" id="approach">
+            </select>
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft">
+            <select class="uk-select" id="strategy">
+            </select>
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label TwoColumnWidth" for="routing">Routing</label>
+        <label class="uk-form-label TwoColumnWidth ColumnPaddingLeft" for="shuffle">Shuffle</label>
+        <div class="uk-form-controls TwoColumnWidth">
+            <select class="uk-select" id="routing">
+            </select>
+        </div>
+        <div class="uk-form-controls TwoColumnWidth ColumnPaddingLeft">
+            <select class="uk-select" id="shuffle">
+            </select>
+        </div>
+
+        <div style="padding-top: 10px;"></div>
+        <label class="uk-form-label">VNE Constraint</label>
+        <div class="uk-form-controls">
+            <select class="uk-select" id="vneConst">
+            </select>
+        </div>
+    </div>
+
+    <button type="button" class="uk-button uk-button-primary CenteredItems BCButtonBlue" id="Place">Place</button>
+</div>
+
+<script src="script.js"></script>
+<script>
+    var uploadSNFileMessage = "Upload an arbitrary zoo topology file...";
+
+    function initialFields() {
+        $("#networkTopology").append(createOption(""));
+        $("#networkTopology").append(createOption(uploadSNFileMessage));
+
+        $("#serviceTopology").append(createOption("DaisyChain"));
+        $("#serviceTopology").append(createOption("Ring"));
+        $("#serviceTopology").append(createOption("Star"));
+
+        $("#serviceSize").append(createOption("3"));
+        $("#serviceSize").append(createOption("4"));
+        $("#serviceSize").append(createOption("5"));
+        $("#serviceSize").append(createOption("6"));
+        $("#serviceSize").append(createOption("7"));
+        $("#serviceSize").append(createOption("8"));
+
+        $("#timeout").append(createOption("500"));
+        $("#timeout").append(createOption("1000", "selected"));
+        $("#timeout").append(createOption("2000"));
+        $("#timeout").append(createOption("4000"));
+
+        $("#bandwidth").append(createOption("1"));
+        $("#bandwidth").append(createOption("2"));
+        $("#bandwidth").append(createOption("3"));
+        $("#bandwidth").append(createOption("4"));
+        $("#bandwidth").append(createOption("5"));
+        $("#bandwidth").append(createOption("6"));
+        $("#bandwidth").append(createOption("7"));
+        $("#bandwidth").append(createOption("8"));
+        $("#bandwidth").append(createOption("9"));
+        $("#bandwidth").append(createOption("10"));
+
+        $("#routing").append(createOption("UCS"));
+        $("#routing").append(createOption("Dijkstra"));
+
+        $("#strategy").append(createOption("Parallel"));
+        $("#strategy").append(createOption("FairABO"));
+        $("#strategy").append(createOption("ABO"));
+        $("#strategy").append(createOption("UBO"));
+        $("#strategy").append(createOption("DBO"));
+        $("#strategy").append(createOption("EnhancedBF"));
+        $("#strategy").append(createOption("BF"));
+        $("#strategy").append(createOption("Custom"));
+
+        $("#approach").append(createOption("NodeBased"));
+        $("#approach").append(createOption("LinkBased"));
+
+        $("#shuffle").append(createOption("On"));
+        $("#shuffle").append(createOption("Off", "selected"));
+
+        $("#vneConst").append(createOption("On"));
+        $("#vneConst").append(createOption("Off", "selected"));
+
+        $("#terminationType").append(createOption("FirstFound"));
+        $("#terminationType").append(createOption("BestFound"));
+    }
+
+    function SNChange() {
+        var x = document.getElementById("networkTopology").value;
+        if(x === uploadSNFileMessage) {
+            load("/topologies.html");
+        }
+    }
+
+    function SGChange() {
+    }
+
+    $("#SNHeader").click(function () {
+        if($("#SNParams").is(":hidden")) {
+            $('#SNParams').slideDown(fadeDelay,"swing");
+            $('#SNHeaderArrow').attr("src","up-arrow.svg");
+
+            if ($("#SingleList").is(':checked')) {
+                if (!$("#SGParams").is(":hidden")) {
+                    $("#SGHeader").trigger("click");
+                }
+                if (!$("#PlacerParams").is(":hidden")) {
+                    $("#PlacerHeader").trigger("click");
+                }
+            }
+        } else {
+            $('#SNParams').slideUp(fadeDelay,"swing");
+            $('#SNHeaderArrow').attr("src","down-arrow.svg");
+        }
+    });
+    $("#SGHeader").click(function () {
+        if($("#SGParams").is(":hidden")) {
+            $('#SGParams').slideDown(fadeDelay,"swing");
+            $('#SGHeaderArrow').attr("src","up-arrow.svg");
+
+            if ($("#SingleList").is(':checked')) {
+                if (!$("#SNParams").is(":hidden")) {
+                    $("#SNHeader").trigger("click");
+                }
+                if (!$("#PlacerParams").is(":hidden")) {
+                    $("#PlacerHeader").trigger("click");
+                }
+            }
+        } else {
+            $('#SGParams').slideUp(fadeDelay,"swing");
+            $('#SGHeaderArrow').attr("src","down-arrow.svg");
+        }
+    });
+    $("#PlacerHeader").click(function () {
+        if($("#PlacerParams").is(":hidden")) {
+            $('#PlacerParams').slideDown(fadeDelay,"swing");
+            $('#PlacerHeaderArrow').attr("src","up-arrow.svg");
+
+            if ($("#SingleList").is(':checked')) {
+                if (!$("#SGParams").is(":hidden")) {
+                    $("#SGHeader").trigger("click");
+                }
+                if (!$("#SNParams").is(":hidden")) {
+                    $("#SNHeader").trigger("click");
+                }
+            }
+        } else {
+            $('#PlacerParams').slideUp(fadeDelay,"swing");
+            $('#PlacerHeaderArrow').attr("src","down-arrow.svg");
+        }
+    });
+    $("#SingleList").click(function () {
+        $( "#OptionMenuImg" ).trigger( "click");
+    });
+    $("#About").click(function () {
+        load("/about.html");
+    });
+    $("#NSPConnect").click(function () {
+        load("/nspconnect.html");
+    });
+    $("#GraphRepresentation").click(function () {
+        load("/graph.html");
+    });
+    $("#LastResults").hide();
+    $("#LastResults").click(function () {
+        load("/results.html");
+    });
+
+    var createOption = function (text, selected) {
+        var option = document.createElement('option');
+        option.innerHTML = text;
+        if(selected !== undefined) {
+            option.setAttribute("selected", "");
+        }
+        return option;
+    }
+
+    var setParameters = function() {
+        window.parent.parameters = {
+            networkTopology: $("#networkTopology").val(),
+            snCPU: $("#SNCPUAmount").val(),
+            snStorage: $("#SNStorageAmount").val(),
+            snBandwidth: $("#SNBandwidthAmount").val(),
+            snLatency: $("#SNLatencyAmount").val(),
+            serviceTopology: $("#serviceTopology").val(),
+            serviceSize: $("#serviceSize").val(),
+            sgCPU: $("#SGCPUAmount").val(),
+            sgStorage: $("#SGStorageAmount").val(),
+            sgBandwidth: $("#SGBandwidthAmount").val(),
+            sgLatency: $("#SGLatencyAmount").val(),
+            timeout: $("#timeout").val(),
+            routing: $("#routing").val(),
+            strategy: $("#strategy").val(),
+            approach: $("#approach").val(),
+            terminationType: $("#terminationType").val(),
+            shuffle: $("#shuffle").val() === "On",
+            vneConst: $("#vneConst").val() === "On",
+            sgUsers: $("#sgUsers").val(),
+            singleList: $("#SingleList").is(':checked'),
+            openPanel: (!$("#SNParams").is(":hidden") ? "1" : (!$("#SGParams").is(":hidden") ? "2" : "3"))
+        };
+    };
+
+    var place = function () {
+        $("#Place").prop('disabled', true);
+        setParameters();
+        $.ajax({
+            url: "/api/eval/start",
+            type: "POST",
+            error: function (data, status) {
+                $("#Place").prop('disabled', false);
+                onerror(data);
+            },
+            success: function (data, status) {
+                load("/results.html");
+            },
+            data: JSON.stringify(window.parent.parameters)
+        });
+    };
+    $("#Place").click(place);
+
+    initialFields();
+
+    function reload() {
+        $.ajax({
+            url: "/api/file/list",
+            type: "GET",
+            error: function (data, status) {
+                onerror(data);
+            },
+            success: function (data, status) {
+                if(data.length === 0){
+                    return;
+                }
+                $("#networkTopology").empty();
+                var option;
+                for (var key in data) {
+                    option = document.createElement('option');
+                    option.innerHTML = data[key].name;
+                    $("#networkTopology").append(option);
+                }
+                option = document.createElement('option');
+                option.innerHTML = uploadSNFileMessage;
+                $("#networkTopology").append(option);
+
+                if(window.parent.parameters.hasOwnProperty('networkTopology')) {
+                    $("#networkTopology").val(window.parent.parameters.networkTopology);
+                }
+            }
+        });
+
+        if(window.parent.parameters.hasOwnProperty('networkTopology')) {
+            $("#LastResults").show();
+            $("#serviceTopology").val(window.parent.parameters.serviceTopology);
+            $("#serviceSize").val(window.parent.parameters.serviceSize);
+            $("#timeout").val(window.parent.parameters.timeout);
+            $("#strategy").val(window.parent.parameters.strategy);
+            $("#routing").val(window.parent.parameters.routing);
+            $("#SNCPUAmount").val(window.parent.parameters.snCPU);
+            $("#SNStorageAmount").val(window.parent.parameters.snStorage);
+            $("#SNBandwidthAmount").val(window.parent.parameters.snBandwidth);
+            $("#SNLatencyAmount").val(window.parent.parameters.snLatency);
+            $("#SGCPUAmount").val(window.parent.parameters.sgCPU);
+            $("#SGStorageAmount").val(window.parent.parameters.sgStorage);
+            $("#SGBandwidthAmount").val(window.parent.parameters.sgBandwidth);
+            $("#SGLatencyAmount").val(window.parent.parameters.sgLatency);
+            $("#approach").val(window.parent.parameters.approach);
+            $("#terminationType").val(window.parent.parameters.terminationType);
+            $("#shuffle").val(window.parent.parameters.shuffle ? "On" : "Off");
+            $("#sgUsers").val(window.parent.parameters.sgUsers);
+            $("#vneConst").val(window.parent.parameters.vneConst ? "On" : "Off");
+            $("#SingleList").prop("checked", window.parent.parameters.singleList);
+
+            if(window.parent.parameters.openPanel === "1") {
+                // nothing
+            } else if(window.parent.parameters.openPanel === "2") {
+                $("#SNParams").hide();
+                $('#SNHeaderArrow').attr("src","down-arrow.svg");
+                $("#SGParams").show();
+                $('#SGHeaderArrow').attr("src","up-arrow.svg");
+            } else {
+                $("#SNParams").hide();
+                $('#SNHeaderArrow').attr("src","down-arrow.svg");
+                $("#PlacerParams").show();
+                $('#PlacerHeaderArrow').attr("src","up-arrow.svg");
+            }
+        }
+    }
+
+    reload();
+
+</script>
+</body>
+</html>

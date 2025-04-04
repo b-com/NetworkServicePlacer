@@ -1,0 +1,92 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+    </div>
+</div>
+<br/>
+<div class="uk-form-stacked">
+    <div id="ChangePageSpinner" uk-spinner="ratio: 2" class="CenteredItems" style="text-align: center; padding-top: 50px;"></div>
+</div>
+<script src="script.js"></script>
+<script>
+
+    var parameters = {};
+    var page = null;
+
+    function stop() {
+        $.ajax({
+            url: "/api/eval/stop",
+            type: "GET",
+            error: function (data, status) {
+                onerror(data);
+            },
+            success: function (data, status) {
+            }
+        });
+    }
+
+    function loadInParent(addr) {
+        $("#ChangePageSpinner").show();
+        if(page !== null) {
+            $(page).fadeOut(fadeDelay, function() {
+                $(this).remove();
+            });
+        }
+        page = document.createElement("iframe");
+        page.onload = function() {
+            $(page).fadeIn(fadeDelay, function () {
+                $("#ChangePageSpinner").hide();
+            });
+        };
+        page.setAttribute("src", addr);
+        page.style.width = "100%";
+        page.style.height = "100%";
+        page.style.backgroundColor = "#ffdfdf";
+        page.style.position = "fixed";
+        page.style.top = "0px";
+        page.style.zIndex = "1";
+        page.style.display = "NONE";
+        document.body.appendChild(page);
+    }
+
+    function notifyInParent(status, msg, time) {
+        UIkit.notification({message: msg, status: status, pos: 'bottom-center', timeout: time})
+    }
+
+    load('main.html');
+</script>
+</body>
+</html>

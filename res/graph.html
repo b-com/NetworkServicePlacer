@@ -1,0 +1,137 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+        <div class="HeaderHeight BCCBlue" style="text-align: center;flex: auto;">
+            &nbsp&nbsp -<b>Graph Representation</b>-
+        </div>
+        <div class="HeaderHeight" id="Return" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img src="left-arrow.svg" style="width:20px; height: 20px;" alt=""/>
+            &nbsp
+        </div>
+    </div>
+</div>
+<div class="CenteredItems" style="">
+    <div style="padding-top: 20px;"></div>
+    <label class="uk-form-label" for="networkTopology">Topology</label>
+    <div class="uk-form-controls">
+        <select class="uk-select" id="networkTopology" onchange="SNChange()">
+        </select>
+    </div>
+    <div style="margin-top: 20px; background-color: #FBFBFB;">
+        <svg id="canvas" class="GraphSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" onload="configureMouse(evt)"></svg>
+    </div>
+    <div id="butDiv">
+        <div style="padding-top: 20px;"></div>
+        <button id="Reload" class="uk-button uk-button-primary BCButtonBlue ThreeColumnWidth" style="padding: 0;">Reload</button>
+        <button id="Random" class="uk-button uk-button-primary BCButtonBlue ThreeColumnWidth" style="margin-left: 3%; padding: 0;">Random</button>
+        <button id="Rotate" class="uk-button uk-button-primary BCButtonBlue ThreeColumnWidth" style="margin-left: 3%; padding: 0;">Rotate</button>
+        <div style="padding-top: 10px;"></div>
+        <button id="Improve" class="uk-button uk-button-primary BCButtonBlue ThreeColumnWidth" style="padding: 0;">Improve</button>
+        <button id="Save" class="uk-button uk-button-primary BCButtonBlue ThreeColumnWidth" style="margin-left: 3%; padding: 0;">Save</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script src="graphSvg.js"></script>
+<script>
+    $("#Return").click(function () {
+        load("/main.html");
+    });
+
+    $("#Reload").click(function () {
+        loadGraph("getLayout", document.getElementById("networkTopology").value);
+    });
+    $("#Improve").click(function () {
+        loadGraph("improveLayout", document.getElementById("networkTopology").value);
+    });
+    $("#Random").click(function () {
+        loadGraph("randomLayout", document.getElementById("networkTopology").value);
+    });
+    $("#Rotate").click(function () {
+        loadGraph("rotateLayout", document.getElementById("networkTopology").value);
+    });
+    $("#Save").click(function () {
+        var layout = "";
+        var nodes = document.getElementsByClassName("GraphNode");
+        var name = document.getElementById("networkTopology").value;
+        for(var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            layout += "" + node.id.split("-")[1] + "," + parseInt("" + node.getAttribute("cx")) + "," + parseInt("" + node.getAttribute("cy")) + "\n";
+        }
+        $.ajax({
+            url: "/api/file/setLayout/" + name,
+            type: "POST",
+            success: function (data, status) {
+                notify("primary", "The layout saved!", 1000);
+            },
+            data: layout
+        });
+    });
+
+    var option = document.createElement('option');
+    option.innerHTML = "";
+    $("#networkTopology").append(option);
+    $.ajax({
+        url: "/api/file/list",
+        type: "GET",
+        error: function (data, status) {
+            onerror(data);
+        },
+        success: function (data, status) {
+            if(data.length === 0){
+                return;
+            }
+            $("#networkTopology").empty();
+            var option;
+            var isFirst = true;
+            for (var key in data) {
+                if(isFirst) {
+                    loadGraph("getLayout", data[key].name);
+                    isFirst = false;
+                }
+                option = document.createElement('option');
+                option.innerHTML = data[key].name;
+                $("#networkTopology").append(option);
+            }
+        }
+    });
+
+    function SNChange() {
+        loadGraph("getLayout", document.getElementById("networkTopology").value);
+    }
+</script>
+</body>
+</html>

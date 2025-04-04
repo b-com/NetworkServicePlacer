@@ -1,0 +1,5 @@
+services:
+  connect:
+    build: .
+    command:
+      - "ws://nsplacer:8080/ws"

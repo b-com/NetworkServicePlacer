@@ -1,0 +1,205 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+        <div class="HeaderHeight BCCYellow" style="text-align: center;flex: auto;">
+            &nbsp&nbsp [<b>Network Topologies</b>]
+        </div>
+        <div class="HeaderHeight" id="Return" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img src="left-arrow.svg" style="width:20px; height: 20px;" alt=""/>
+            &nbsp
+        </div>
+    </div>
+</div>
+<div class="CenteredItems">
+    <br/>
+    <img class="" style="width: 18px; " src="info.svg" alt=""/> To get a network topology, or to find out about the file format, please visit <a href="http://www.topology-zoo.org/" target="_blank">zoo-topology</a>
+    <br/>
+    <div class="js-upload uk-placeholder uk-text-center">
+        <span uk-icon="icon: cloud-upload"></span>
+        <span class="uk-text-middle">Drop your files or </span>
+        <div uk-form-custom>
+            <input type="file" multiple>
+            <span class="uk-link">browse</span>
+        </div>
+    </div>
+</div>
+<progress id="js-progressbar" class="uk-progress CenteredItems" value="0" max="100" hidden></progress>
+<div id="downloadList" class="CenteredItems" style="overflow: auto; overflow-x: hidden; height: 350px; border: solid 1px #ededed;">
+</div>
+
+<script>
+    var bar = document.getElementById('js-progressbar');
+    UIkit.upload('.js-upload', {
+        url: '/api/file/upload',
+        multiple: true,
+        name: "file",
+        beforeSend: function () {
+            console.log('beforeSend', arguments);
+        },
+        beforeAll: function () {
+            console.log('beforeAll', arguments);
+        },
+        load: function () {
+            console.log('load', arguments);
+        },
+        error: function () {
+            console.log('error', arguments);
+        },
+        complete: function (e) {
+            console.log('complete', e);
+            console.log('complete', arguments);
+        },
+        loadStart: function (e) {
+            console.log('loadStart', arguments);
+            bar.removeAttribute('hidden');
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+        progress: function (e) {
+            console.log('progress', arguments);
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+        loadEnd: function (e) {
+            console.log('loadEnd', arguments);
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+        completeAll: function () {
+            console.log('completeAll', arguments);
+            setTimeout(function () {
+                bar.setAttribute('hidden', 'hidden');
+            }, 1000);
+            reload();
+        }
+    });
+</script>
+<script src="script.js"></script>
+<script>
+    function humanFileSize(bytes, si=false, dp=1) {
+        const thresh = si ? 1000 : 1024;
+        if (Math.abs(bytes) < thresh) {
+            return bytes + '\xa0';
+        }
+        const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        let u = -1;
+        const r = 10**dp;
+        do {
+            bytes /= thresh;
+            ++u;
+        } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+        return bytes.toFixed(dp) + '\xa0' + units[u];
+    }
+
+    $("#Return").click(function () {
+        load("/main.html");
+    });
+
+    function sendGet(sendUrl) {
+        $.ajax({
+            url: sendUrl,
+            type: "GET",
+            error: function (data, status) {
+                reload();
+            },
+            success: function (data, status) {
+                reload();
+            }
+        });
+    }
+
+    function reload() {
+        $("#downloadList").empty();
+        $("#downloadList").hide();
+        $("#Spinner").show();
+
+        $.ajax({
+            url: "/api/file/list",
+            type: "GET",
+            error: function (data, status) {
+                onerror(data);
+            },
+            success: function (data, status) {
+                $("#Spinner").hide();
+                $("#downloadList").fadeIn(fadeDelay);
+                for (var key in data) {
+                    var div = document.createElement('div');
+                    div.style.display = "inline-flex";
+                    div.style.paddingLeft = "10px";
+                    div.style.flexDirection = "row";
+                    div.style.width = "calc(100% - 20px)";
+
+                    var fileLink = document.createElement('a');
+                    fileLink.appendChild(document.createTextNode(data[key].name));
+                    fileLink.href = "/api/file/download/"+data[key].id;
+                    fileLink.classList.add("HeaderHeight");
+                    fileLink.classList.add("FileEntryName");
+                    fileLink.classList.add("BCLinkBlue");
+                    div.append(fileLink);
+
+                    var fileSize = document.createElement('span');
+                    fileSize.classList.add("HeaderHeight");
+                    fileSize.classList.add("FileEntrySize");
+                    fileSize.classList.add("BCCLightGray");
+                    fileSize.appendChild(document.createTextNode("" + humanFileSize(data[key].length)));
+                    div.append(fileSize);
+
+                    var fileDelete = document.createElement('a');
+                    fileDelete.innerHTML = "&nbsp";
+                    fileDelete.classList.add("HeaderHeight");
+                    fileDelete.classList.add("FileEntryDelete");
+                    var deleteIcon = document.createElement('img');
+                    deleteIcon.src = "delete.svg";
+                    deleteIcon.style.width = "15px";
+                    deleteIcon.style.height = "15px";
+                    fileDelete.style.textDecoration = "none";
+                    fileDelete.appendChild(deleteIcon);
+                    fileDelete.data = "/api/file/delete/" + data[key].id;
+                    fileDelete.onclick = function(){
+                        sendGet(this.data);
+                    };
+                    div.append(fileDelete);
+
+                    $("#downloadList").append(div);
+                }
+            }
+        });
+    }
+
+    reload();
+</script>
+</body>
+</html>

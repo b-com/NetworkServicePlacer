@@ -1,0 +1,277 @@
+/**
+ * ===============================================================================
+ * This file is part of Network Service Placer.
+ *
+ * Copyright 2021-2022 b<>com. All rights reserved.
+ *
+ * Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ * ===============================================================================
+ */
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(245, 245, 245, 0.4);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(190, 190, 190, 0.4);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(170, 170, 170, 0.4);
+}
+
+body {
+    padding-bottom: 20px;
+    padding-top: 50px;
+    font-family: Verdana, sans-serif;
+    overflow: overlay;
+}
+
+.HeaderHeight {
+    user-select: none;
+    height: 50px;
+    line-height: 50px;
+}
+.HeaderBackground {
+    background-color: #000000;
+}
+
+.HeaderIcon {
+    height: 25px;
+    padding-bottom: 5px;
+}
+
+.ThreeColumnWidth {
+    width: 30%;
+    display: inline-block !important;
+}
+.FourColumnWidth {
+    width: 23%;
+    display: inline-block !important;
+}
+.TwoColumnWidth {
+    width: 47.8%;
+    display: inline-block !important;
+}
+.ColumnPaddingLeft {
+    padding-left: 3%;
+}
+
+.FileEntryName {
+    text-align: left;
+    flex: auto;
+    overflow: hidden;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 5px;
+}
+
+.FileEntrySize {
+    text-align: center;
+    flex: 0 1 auto;
+    padding-left: 5px;
+}
+
+.FileEntryDelete {
+    flex: 0 0 30px;
+    text-align: center;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+/*
+@media (prefers-color-scheme: dark) {
+}
+@font-face {
+    font-family: iransans;
+    src: url(iransans.ttf);
+}
+body {
+    font-family: iransans;
+}
+*/
+CenteredItems {
+}
+@media only screen and (max-width: 500px) {
+    .CenteredItems {
+        width: 90% !important;
+        margin-left: 5% !important;
+    }
+}
+@media only screen and (min-width: 500px) {
+    .CenteredItems {
+        width: 450px !important;
+        margin-left: calc(50% - 225px); !important;
+    }
+}
+
+/**
+BCOM Colors and BCOM Bachground Colors
+ */
+.BCCBlue {
+    color: #00DDFF;
+}
+.BCBCBlue {
+    background-color: #00DDFF;
+}
+.BCCLightGray {
+    color: #8C8C8C;
+}
+.BCBCLightGray {
+    background-color: #8C8C8C;
+}
+.BCCDarkGray {
+    color: #505050;
+}
+.BCBCDarkGray {
+    background-color: #505050;
+}
+.BCCRed {
+    color: #FC575D;
+}
+.BCBCRed {
+    background-color: #FC575D;
+}
+.BCCGreen {
+    color: #00C256;
+}
+.BCBCGreen {
+    background-color: #00C256;
+}
+.BCCYellow {
+    color: #F6B828;
+}
+.BCBCYellow {
+    background-color: #F6B828;
+}
+.BCCPurple {
+    color: #9B73FF;
+}
+.BCBCPurple {
+    background-color: #9B73FF;
+}
+
+/**
+BCom Buttons colors
+ */
+.BCButtonBlue {
+    background-color: #00DDFF;
+}
+.BCButtonBlue:hover {
+    opacity: 0.75;
+    background-color: #00DDFF;
+}
+.BCButtonBlue:focus {
+    opacity: 0.75;
+    background-color: #00DDFF;
+}
+.BCLinkBlue {
+    color: #00DDFF;
+}
+.BCLinkBlue:hover {
+    opacity: 0.75;
+    color: #00DDFF;
+}
+.BCLinkBlue:focus {
+    opacity: 0.75;
+    color: #00DDFF;
+}
+
+.uk-table td {
+    padding: 10px 20px;
+}
+.uk-table tr {
+    border-width: 0px !important;
+}
+
+.ParamsDropDownHPanel {
+    display: inline-flex;
+    flex-direction: row;
+    margin-bottom: 15px;
+    /* box-shadow: 0 0px 0px 0 rgba(0, 205, 120, 0.2), 0 0px 0px 0 #00CD78; */
+}
+.ParamsDropDownHHeader {
+    flex: auto;
+    margin: 0;
+    font-size: 18px;
+    color: #00C256;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.ParamsDropDownImg {
+    flex: 0 0 auto;
+    padding-left: 10px;
+    padding-right: 5px;
+    height: 20px;
+    padding-top: 5px;
+}
+.ParamsDropDownPPanel {
+    padding-bottom: 20px;
+}
+.GraphSvg {
+    background-color: #FBFBFB;
+    transition: opacity 1s;
+    -webkit-transition: opacity 1s;
+}
+.GraphLink {
+    pointer-events: none;
+    transition: opacity 1s;
+    -webkit-transition: opacity 1s;
+}
+.GraphLink:hover {
+    opacity: 1;
+}
+.GraphNode {
+    transition: opacity 1s;
+    -webkit-transition: opacity 1s;
+}
+.GraphNode:hover {
+    opacity: 1;
+}
+.GraphNodeLabel {
+    pointer-events: none;
+    cursor: grab;
+}
+
+.camerabox {
+    grid-area: camerabox;
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
+    display: block;
+    position:fixed;
+    overflow:auto;
+    background-color: black;
+}
+#received_video {
+    width: 100%;
+    height: 100%;
+    position:absolute;
+}
+#local_video {
+    width: 120px;
+    height: 90px;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    border: none;
+}
+#video_panel {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    bottom: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+}
+.call-icon-img {
+    width:60px;
+}

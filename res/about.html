@@ -1,0 +1,76 @@
+<!--
+ ===============================================================================
+ This file is part of Network Service Placer.
+
+ Copyright 2021-2022 b<>com. All rights reserved.
+
+ Network Service Placer is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ Network Service Placer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
+ ===============================================================================
+-->
+
+<html>
+<head>
+    <title>Network Service Placer</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.18/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="HeaderHeight HeaderBackground" style="width: 100%; position: fixed;top: 0px;z-index: 1;">
+    <div class="CenteredItems" style="display: inline-flex; flex-direction: row-reverse;">
+        <div class="HeaderHeight BCCBlue" style="text-align: center;flex: auto;">
+            &nbsp&nbsp -<b>About</b>-
+        </div>
+        <div class="HeaderHeight" id="Return" style="text-align: center;flex: 0 0 50px;">
+            &nbsp <img src="left-arrow.svg" style="width:20px; height: 20px;" alt=""/>
+            &nbsp
+        </div>
+    </div>
+</div>
+
+<br/>
+<div class="CenteredItems" rows="27" style="text-align: left; border-width: 0;">
+    <div style="text-align: justify; text-justify: inter-word;" >
+        Network Service Placer is a tool, developed to facilitate the evaluations based on several network service placement strategies. It gives the opportunity to the researchers in this field of study to track the behaviour of the network service placement, by making adjustments in different aspects relating to substrate network, service graph and the placement algorithm, to see how the topology, node resources, link resources and QoS requirements influence the placement. In addition, it provides an infrastructure for the researchers to evaluate their own placement solutions. As long as their parameters are compatible, researchers can compare their results with the results obtained from our tool. It can also be used in other subjects relevant to this context (e.g. topology abstractions).
+        <br/> This tool is developed in b<>com, a private Technological Research Institute which explores, designs and provides innovations to companies that want to develop their competitiveness through digital technology.
+    </div>
+
+    <br/> Developer and supervisors
+    <ul style="font-size: 95%; margin: 0;padding-top: 10px; text-align: left;">
+        <li>Masoud Taghavian (masoud.taghavian@gmail.com)</li>
+        <li>Pr. Geraldine Texier (geraldine.texier@imt-atlantique.fr)</li>
+        <li>Pr. Yassine Hadjadj-Aoul (yassine.hadjadj-aoul@irisa.fr)</li>
+        <li>Dr. Philippe Bertin (philippe.bertin@b-com.com)</li>
+    </ul>
+    <br/> Publications
+    <ul style="font-size: 95%; margin: 0;padding-top: 10px; text-align: left;">
+        <li><a href="https://ieeexplore.ieee.org/document/9685796" target="_blank">M. Taghavian, Y. Hadjadj-Aoul, G. Texier and P. Bertin, "An Approach to Network Service Placement using Intelligent Search Strategies over Branch-and-Bound," 2021 IEEE Global Communications Conference (GLOBECOM), 2021, pp. 1-6, doi: 10.1109/GLOBECOM46510.2021.9685796.</a></li>
+        <li><a href="https://ieeexplore.ieee.org/document/9978830" target="_blank">M. Taghavian, Y. Hadjadj-Aoul, G. Texier and P. Bertin, "NSPlacer: A Tool for Evaluating Service Placement Algorithms in Post-5G Networks," 2022 IEEE 11th International Conference on Cloud Networking (CloudNet), 2022, pp. 252-256, doi: 10.1109/CloudNet55617.2022.9978830.</a></li>
+    </ul>
+</div>
+
+<script src="script.js"></script>
+<script>
+    $("#Return").click(function () {
+        load("/main.html");
+    });
+
+</script>
+</body>
+</html>
