@@ -14,8 +14,8 @@
 package com.bcom.nsplacer.placement;
 
 import com.bcom.nsplacer.NsPlacerApplication;
-import com.bcom.nsplacer.heroku.WSConnection;
-import com.bcom.nsplacer.heroku.WSocketController;
+import com.bcom.nsplacer.config.WSConnection;
+import com.bcom.nsplacer.config.WSocketController;
 import com.bcom.nsplacer.misc.StreamUtils;
 import com.bcom.nsplacer.placement.enums.PlacementApproach;
 import com.bcom.nsplacer.placement.enums.SearchStrategy;

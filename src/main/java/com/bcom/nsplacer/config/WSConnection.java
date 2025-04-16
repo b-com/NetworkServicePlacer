@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
  * ===============================================================================
  */
-package com.bcom.nsplacer.heroku;
+package com.bcom.nsplacer.config;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,20 +23,7 @@ import org.springframework.web.socket.WebSocketSession;
 @NoArgsConstructor
 public class WSConnection {
 
-    // General
-    private WSocketType type;
     private WebSocketSession wss;
-
-    // For publisher-subscriber
-    private String topic;
-
-    // For WebRTC
-    private String webrtcName;
-    private String webrtcOtherName;
-
-    // For Meeting
-    private boolean openToJoin = false;
-    private WSConnection meetingOtherSide;
 
     WSConnection(WebSocketSession wss) {
         this.wss = wss;

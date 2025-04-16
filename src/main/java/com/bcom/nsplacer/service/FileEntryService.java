@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
-/**
- * @author masoud
- */
 @Service
 public class FileEntryService extends BaseService<FileEntry> {
 

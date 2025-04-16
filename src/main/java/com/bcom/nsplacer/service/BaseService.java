@@ -20,9 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author masoud
- */
 public abstract class BaseService<E extends BaseModel> {
 
     private final JpaRepository<E, String> repo;

@@ -13,7 +13,7 @@
  */
 package com.bcom.nsplacer.controller;
 
-import com.bcom.nsplacer.heroku.WSocketController;
+import com.bcom.nsplacer.config.WSocketController;
 import com.bcom.nsplacer.misc.MathUtils;
 import com.bcom.nsplacer.misc.ParameterInitializer;
 import com.bcom.nsplacer.misc.StreamUtils;

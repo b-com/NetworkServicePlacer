@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with Network Service Placer. If not, see <https://www.gnu.org/licenses/>.
  * ===============================================================================
  */
-package com.bcom.nsplacer.heroku;
+package com.bcom.nsplacer.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
